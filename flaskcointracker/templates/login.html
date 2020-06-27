@@ -1,15 +1,30 @@
 {% extends "header.html" %}
+
 {% block body %}
-<body>
-	<div class="container">
-		<br>
-		<h4>Please Login:</h4>
-		<br>
-		<form action="" class="form-inline" method="post">
-			<input type="text" class="form-control" placeholder = "Username" name="username" value="{{request.form.username}}">
-			<input type="password" class="form-control" placeholder = "Password" name="password" value="{{request.form.password}}">
-			<input class="btn btn-default" type="submit" value="Login">
-		</form>
-	</div>
-</body>
+{% for message in form.email.errors %}
+   {{ message }}
+{% endfor %}
+{% for message in form.password.errors %}
+   {{ message }}
+{% endfor %}
+
+<form method="post">
+    {{ form.csrf_token }}
+    <div class="form-group">
+        <label for="email">Email:</label>
+        {{ form.email(class_="form-control") }}
+    </div>
+    <div class="form-group">
+        <label for="password">Password:</label>
+        {{ form.password(class="form-control") }}
+    </div>
+    <div class="form-group">
+        <label for="remember">Remember me:</label>
+        {{ form.remember(class="form-control") }}
+    </div>
+    {{ form.submit(class="btn btn-primary") }}
+
+</form>
+
+
 {% endblock %}

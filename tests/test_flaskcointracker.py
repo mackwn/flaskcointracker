@@ -77,6 +77,45 @@ def test_signup(client):
     ).first()
     assert not added_user
     
+def test_login(client):
+    # test get
+    response = client.get('/login')
+    assert response.status_code == 200
+
+    # test login with good credentials
+    response = client.post('/login',data={
+        'email':"testuser@test.com",
+        'password':"testpass"
+    }, follow_redirects=True)
+    assert response.status_code == 200
+    assert b'Home page yo - Salvete omnes' in response.data
+
+    # test login with bad password
+    response = client.post('/login',data={
+        'email':"testuser@test.com",
+        'password':"testpasswrong"
+    }, follow_redirects=True)
+    assert response.status_code == 200
+    for phrase in ['Email','Password','Remember me']:
+        assert bytes('{phrase}'.format(phrase=phrase),encoding='utf8') in response.data
+
+    # test login with bad username
+    response = client.post('/login',data={
+        'email':"testuser@test.com2",
+        'password':"testpass"
+    }, follow_redirects=True)
+    assert response.status_code == 200
+    for phrase in ['Email','Password','Remember me']:
+        assert bytes('{phrase}'.format(phrase=phrase),encoding='utf8') in response.data
+
+def test_view_user(client):
+    User = flaskcointracker.models.User
+    user = User.query.filter_by(id=1).first()
+    response = client.get('users/1')
+    assert response.status_code == 200
+    assert bytes('{email}'.format(email=user.email),encoding='utf8') in response.data
+    response = client.get('users/100')
+    assert response.status_code == 404
 
 #Fixtures
 
@@ -96,6 +135,10 @@ def client():
             #db_fd.create_all()
             #db = SQLalchemy(flaskcointracker.app)
             flaskcointracker.db.create_all()
+            User = flaskcointracker.models.User
+            user = User(email="testuser@test.com",password="testpass")
+            flaskcointracker.db.session.add(user)
+            flaskcointracker.db.session.commit()
         yield client
 
     os.close(db_fd)
