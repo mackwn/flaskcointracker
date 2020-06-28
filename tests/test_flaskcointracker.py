@@ -6,6 +6,15 @@ import flaskcointracker
 # Model Tests
 #def test_user():
     #User = flaskcointracker.models.User
+# Helpers
+def userlogin(email,password,client):
+    client.post('/login',data={
+        'email':"{email}".format(email=email),
+        'password':"{password}".format(password=password)
+    }, follow_redirects=True)
+    User = flaskcointracker.models.User
+    user = User.query.filter_by(email=email).first()
+    return user
 
 
 # Integration Tests
@@ -45,6 +54,9 @@ def test_signup(client):
     new_user_count = flaskcointracker.models.User.query.count()
     ## new user count increased 
     assert new_user_count == user_count+1
+    ## added user password hashed correctly
+    assert flaskcointracker.bcrypt.check_password_hash(added_user.password,TESTPASSWORD) 
+
 
     ## can't create user with unconfirmed password
     TESTEMAIL2 = 'testest@test.com'
@@ -109,13 +121,34 @@ def test_login(client):
         assert bytes('{phrase}'.format(phrase=phrase),encoding='utf8') in response.data
 
 def test_view_user(client):
-    User = flaskcointracker.models.User
-    user = User.query.filter_by(id=1).first()
+    # can't access user if not logged on
     response = client.get('users/1')
+    assert response.status_code == 302
+    # logged in user can see their own profile
+    user = userlogin('testuser@test.com','testpass',client)
+    response = client.get('users/{}'.format(int(user.id)))
     assert response.status_code == 200
     assert bytes('{email}'.format(email=user.email),encoding='utf8') in response.data
+    # non existent users throw a 404
     response = client.get('users/100')
     assert response.status_code == 404
+    # accessing a user that isn't you redirects you to your own account
+    response = client.get('users/2', follow_redirects=True)
+    assert response.status_code == 200
+    assert bytes('{email}'.format(email=user.email),encoding='utf8') in response.data
+    
+def test_logout(client):
+    user = userlogin('testuser@test.com','testpass',client)
+    response = client.get('logout',follow_redirects=True)
+    assert response.status_code == 200
+    assert b'Home page yo - Salvete omnes' in response.data
+    response = client.get('users/{}'.format(int(user.id)),follow_redirects=True)
+    assert response.status_code == 200
+    assert b'Please log in to access this page.' in response.data
+
+
+
+
 
 #Fixtures
 
@@ -138,6 +171,8 @@ def client():
             User = flaskcointracker.models.User
             user = User(email="testuser@test.com",password="testpass")
             flaskcointracker.db.session.add(user)
+            user2 = User(email="testuser2@test.com",password="testpass")
+            flaskcointracker.db.session.add(user2)
             flaskcointracker.db.session.commit()
         yield client
 
