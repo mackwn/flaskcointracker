@@ -15,3 +15,11 @@ class EmailPasswordLoginForm(Form):
     password = PasswordField('Password', [DataRequired()])
     remember = BooleanField('Remember Me')
     submit = SubmitField('Sign In')
+
+class EmailPasswordUpdateForm(Form):
+    email = StringField('Email', validators=[Email()])
+    old_password = PasswordField('Existing Password', validators=[DataRequired()])
+    password = PasswordField('Password', [
+        EqualTo('confirm', message='Passwords must match')
+    ])
+    confirm = PasswordField('Confirm Password')

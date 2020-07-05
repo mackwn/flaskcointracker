@@ -57,7 +57,6 @@ def test_signup(client):
     ## added user password hashed correctly
     assert flaskcointracker.bcrypt.check_password_hash(added_user.password,TESTPASSWORD) 
 
-
     ## can't create user with unconfirmed password
     TESTEMAIL2 = 'testest@test.com'
     response = client.post('/sign-up',data={
@@ -145,6 +144,64 @@ def test_logout(client):
     response = client.get('users/{}'.format(int(user.id)),follow_redirects=True)
     assert response.status_code == 200
     assert b'Please log in to access this page.' in response.data
+    
+def test_update_user(client):
+    # log in required
+    response = client.get('users/1/update')
+    assert response.status_code == 302
+
+    user = userlogin('testuser@test.com','testpass',client)
+    # get update page
+    response = client.get('users/{id}/update'.format(id=user.id))
+    assert response.status_code == 200
+    for phrase in ['Email Address','Password','Confirm New Password']:
+        assert bytes('{phrase}'.format(phrase=phrase),encoding='utf8') in response.data
+
+    # user can't post for another user
+    response = client.post('users/2/update', data={
+        'email':'badactor'
+    })
+    assert response.status_code == 404
+    ## redirects to update page
+    new_email = 'new@email.com'
+    new_pass = 'newpass'
+    # update email only
+
+    oldemail = user.email
+    response = client.post('users/{id}/update'.format(id=user.id), data={
+        'old_password':'testpass',
+        'email':new_email,
+        'password':''
+    }, follow_redirects=True)
+    assert response.status_code == 200
+    assert flaskcointracker.models.User.query.get(user.id).email == new_email
+    assert oldemail != flaskcointracker.models.User.query.get(user.id).email
+
+    # update password only
+    user = flaskcointracker.models.User.query.get(user.id)
+    response = client.post('users/{id}/update'.format(id=user.id), data={
+        'email':new_email,
+        'old_password':'testpass',
+        'password':new_pass,
+        'confirm':new_pass
+    }, follow_redirects=True)
+    assert response.status_code == 200
+    assert userlogin(new_email ,new_pass ,client)
+
+    # update email and password
+    user = flaskcointracker.models.User.query.get(user.id)
+    newer_email = 'newer@new.com'
+    newer_pass = 'newerpass'
+    response = client.post('users/{id}/update'.format(id=user.id), data={
+        'email':newer_email,
+        'old_password':new_pass,
+        'password':newer_pass,
+        'confirm':newer_pass
+    }, follow_redirects=True)
+    assert response.status_code == 200
+    #assert flaskcointracker.models.User.query.get(user.id).email == newer_email
+    assert userlogin(newer_email, newer_pass, client)
+
 
 
 

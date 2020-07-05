@@ -51,7 +51,7 @@ def register():
     # if form.validate():
     #     print("valid")
 
-    print(form.errors)
+    #print(form.errors)
     if form.validate_on_submit():
         #print('yup, form is valid')
         user = User(email=form.email.data, password=form.password.data)
@@ -74,14 +74,54 @@ def view_user(user_id):
         return redirect(url_for('view_user',user_id = int(current_user.id)))
     return render_template('user.html', user=user)
 
+# User Index
+@app.route('/users')
+@login_required
+def view_users():
+    pass
 
-## Edit User
+## Update User
+@app.route('/users/<user_id>/update', methods=["GET","POST"])
+@login_required
+def update_user(user_id):
+    if int(user_id) != int(current_user.id):  
+        print(user_id)
+        print(current_user.id)
+        print(user_id == current_user.id)
+        return abort(404)
+    user = User.query.filter_by(id=int(user_id)).first()
+    form = forms.EmailPasswordUpdateForm()
+    form.email.default = user.email
+    if form.validate_on_submit():
+        if not bcrypt.check_password_hash(user.password, form.old_password.data):
+            flash('Incorrect password.')
+            return redirect(url_for('update_user',user_id = int(current_user.id)))
+
+        # change email only
+        if (form.email.data != user.email) and (len(form.password.data) == 0):
+            user.email = form.email.data
+            db.session.commit()
+        # change password only
+        if (form.email.data == user.email) and (len(form.password.data) > 0):
+            user.password = form.password.data
+            db.session.commit()
+        # change both
+        if (form.email.data != user.email) and (len(form.password.data) > 0):
+            user.email = form.email.data
+            user.password = form.password.data
+            db.session.commit()
+        return redirect(url_for('view_user',user_id = int(current_user.id)))
+
+    return render_template("user_update.html", form=form,user=user)
 
 ## Delete User
+@app.route('/users/<user_id>/delete')
+@login_required
+def delete_user(user_id):
+    pass
 
-## Login User
 
-## Logout User
+
 
 
 
