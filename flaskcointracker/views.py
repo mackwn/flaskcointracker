@@ -78,7 +78,8 @@ def view_user(user_id):
 @app.route('/users')
 @login_required
 def view_users():
-    pass
+    users = User.query.all()
+    return render_template('user_index.html', users=users)
 
 ## Update User
 @app.route('/users/<user_id>/update', methods=["GET","POST"])
@@ -115,11 +116,25 @@ def update_user(user_id):
     return render_template("user_update.html", form=form,user=user)
 
 ## Delete User
-@app.route('/users/<user_id>/delete')
+@app.route('/users/<user_id>/delete', methods=["GET","POST"])
 @login_required
 def delete_user(user_id):
-    pass
+    if int(user_id) != int(current_user.id):  
+        return abort(404)
+    user = User.query.filter_by(id=int(user_id)).first()
+    form = forms.PasswordDeleteForm()
 
+    if form.validate_on_submit():
+        if not bcrypt.check_password_hash(user.password, form.password.data):
+            flash('Incorrect password.')
+            return redirect(url_for('delete_user',user_id = int(current_user.id)))
+        logout_user()
+        #User.query.filter_by(id=int(user_id)).first().delete()
+        db.session.delete(user)
+        db.session.commit()
+        return redirect(url_for('homepage'))
+        
+    return render_template('delete_user.html',form=form)
 
 
 

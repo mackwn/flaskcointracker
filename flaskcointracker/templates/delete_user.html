@@ -1,0 +1,34 @@
+{% extends "header.html" %}
+
+{% block body %}
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+{% for message in form.password.errors %}
+   {{ message }}
+{% endfor %}
+
+<form method="post">
+    {{ form.csrf_token }}
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      {{ form.password(class_="form-control") }}
+     <!-- <input type="password" name="password" class="form-control" id="signupPassword" placeholder="Password">-->
+    </div>
+    <div class="form-group">
+        <label for="confirm">Confirm Password</label>
+        {{ form.confirm(class_="form-control") }}
+       <!-- <input type="password" name="password" class="form-control" id="signupPassword" placeholder="Password">-->
+      </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+
+{% endblock %}

@@ -202,8 +202,35 @@ def test_update_user(client):
     #assert flaskcointracker.models.User.query.get(user.id).email == newer_email
     assert userlogin(newer_email, newer_pass, client)
 
+def test_delete_user(client):
+    
+    # log in required
+    response = client.get('users/1/delete')
+    assert response.status_code == 302
 
+    user = userlogin('testuser@test.com','testpass',client)
+    assert user
+    # get update page
+    response = client.get('users/{id}/delete'.format(id=user.id))
+    assert response.status_code == 200
+    for phrase in ['Password','Confirm Password']:
+        assert bytes('{phrase}'.format(phrase=phrase),encoding='utf8') in response.data
 
+    # user can't post for another user
+    response = client.post('users/2/delete', data={
+        'password':'badactor',
+        'confirm':'badactor'
+    })
+    assert response.status_code == 404
+    
+
+    old_id = user.id
+    response = client.post('users/{id}/delete'.format(id=user.id), data={
+        'password':'testpass',
+        'confirm':'testpass'
+    }, follow_redirects=True)
+    assert response.status_code == 200
+    assert not flaskcointracker.models.User.query.get(old_id)
 
 
 

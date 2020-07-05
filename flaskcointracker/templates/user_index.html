@@ -2,4 +2,26 @@
 {% block body %}
 
 
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Email</th>
+        <th scope="col">Account</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in users %}
+      <tr>
+        <th scope="row">{{ user.id }}</th>
+        <td>{{ user.email }}</td>
+        <td><a href='users\{{ user.id }}\update'>Edit</a></td>
+
+      </tr>
+      {% endfor %}
+
+    </tbody>
+  </table>
+
+
 {% endblock %}  

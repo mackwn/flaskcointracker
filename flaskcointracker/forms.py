@@ -10,6 +10,13 @@ class EmailPasswordForm(Form):
     ])
     confirm = PasswordField('Confirm Password')
 
+class PasswordDeleteForm(Form):
+    password = PasswordField('Password', [
+        DataRequired(),
+        EqualTo('confirm', message='Passwords must match')
+    ])
+    confirm = PasswordField('Confirm Password')
+
 class EmailPasswordLoginForm(Form):
     email = StringField('Email', validators=[DataRequired()])
     password = PasswordField('Password', [DataRequired()])
