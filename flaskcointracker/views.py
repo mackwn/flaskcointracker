@@ -5,10 +5,14 @@ from flask import render_template, redirect, request, current_app, session, \
 from flask_login import login_user, logout_user, login_required, current_user
 from flaskcointracker import forms
 from flaskcointracker.models import User
+import requests
+from flaskcointracker.helpers import coinbase_spot_prices
+
 # Static Pages
 @app.route('/')
 def homepage():
-    return render_template("main.html")
+    prices = coinbase_spot_prices()
+    return render_template("main.html",prices=prices)
 
 # Views for User
 ## Authenticate User
