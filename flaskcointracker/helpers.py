@@ -15,6 +15,11 @@ def coinbase_spot_prices():
     for k, v in pairs.items():
         prices[k] = _coinbase_spot(v)
 
+    #app.logger.info('Bitcoin price: {}'.format(prices['Bitcoin']['price']))
+    #app.logger.info('Ethereum price: {}'.format(prices['Ethereum']['price']))
+    print('Bitcoin price: {}'.format(prices['Bitcoin']['price']))
+    print('Ethereum price: {}'.format(prices['Ethereum']['price']))
+
     return prices
 
 if __name__ == "__main__":
