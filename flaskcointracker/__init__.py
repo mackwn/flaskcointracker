@@ -5,6 +5,7 @@ from flask import render_template
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from flask_migrate import Migrate
 from celery import Celery
 from celery.task.base import periodic_task
 from datetime import timedelta
@@ -26,7 +27,7 @@ celery.conf.update(app.config)
 #app.config["SQLALCHEMY_DATABASE_URI"] = db_file
 #app.config.from_pyfile('config.py') #having this now does't matter, it would just overwrite what i have
 db = SQLAlchemy(app)
-
+migrate = Migrate(app, db)
 #db.app = app
 #db.init_app(app)
 
@@ -37,8 +38,9 @@ login_manager.login_view = 'login'
 login_manager.init_app(app)
 
 import flaskcointracker.views
-from flaskcointracker.models import User
+from flaskcointracker.models import User, Notification
 
+app.logger.info('Server up')
 
 @login_manager.user_loader
 def load_user(user_id):
