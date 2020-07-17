@@ -1,5 +1,12 @@
 import requests
 import datetime as dt
+from collections import OrderedDict 
+
+
+coin_dict = OrderedDict({
+    'btc-usd-coinbase':['Bitcoin'],
+    'eth-usd-coinbase':['Ethereum']
+})
 
 def coinbase_spot_prices():
     def _coinbase_spot(currency_pair):

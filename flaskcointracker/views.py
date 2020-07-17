@@ -4,7 +4,7 @@ from flask import render_template, redirect, request, current_app, session, \
     flash, url_for, abort
 from flask_login import login_user, logout_user, login_required, current_user
 from flaskcointracker import forms
-from flaskcointracker.models import User
+from flaskcointracker.models import User, Notification
 import requests
 from flaskcointracker.helpers import coinbase_spot_prices
 
@@ -143,9 +143,50 @@ def delete_user(user_id):
 
 
 
-
 # NOTIFICATION
+# index
+@app.route('/notifications')
+@login_required
+def view_notifications():
+    notifications = Notification.query.all()
+    return render_template('notifications.html', notifications=notifications)
 
+@app.route('/notification/new')
+@login_required
+def create_notification():
+    user = User.query.get(current_user.id)
+    form = forms.NotificationForm()
+    current_price = 400
+    if form.validate_on_submit():
+        note = Notification(
+            price = form.price.data,
+            coin = form.coin.data,
+            initial_price = current_price,
+            owner = user
+        )
+        db.session.add(note)
+        db.session.commit()
+        return redirect(url_for('view_user',user_id = int(current_user.id)))
+
+    return render_template('create_notification.html', form=form)
+
+
+@app.route('/notifications/<notification_id>/delete',methods=['GET','POST'])
+@login_required
+def delete_notification(notification_id):
+    note = Notification.query.get(notification_id)
+    if note.user_id != current_user.id:
+        return abort(404)
+    form = forms.NotificationDeleteForm()
+
+    if form.validate_on_submit():
+        db.session.delete(note)
+
+        return redirect(url_for('view_user',user_id = int(current_user.id)))
+
+    return render_template('delete_notification.html', form=forms)
+
+    
 
 
 

@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm as Form #I love Tina
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, DecimalField,SelectField
 from wtforms.validators import DataRequired, Email, EqualTo
+from flaskcointracker.helpers import coin_dict
 
 class EmailPasswordForm(Form):
     email = StringField('Email', validators=[DataRequired(), Email()])
@@ -30,3 +31,11 @@ class EmailPasswordUpdateForm(Form):
         EqualTo('confirm', message='Passwords must match')
     ])
     confirm = PasswordField('Confirm Password')
+
+class NotificationForm(Form):
+    price = DecimalField('Price',places=2,validators=DataRequired())
+    coin = SelectField('Coin', choices=[(k, v[0]) for k, v in coin_dict.items()],
+        validators=[DataRequired()])
+
+class NotificationDeleteForm(Form):
+    submit = SubmitField('Delete')

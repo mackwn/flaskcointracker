@@ -1,0 +1,27 @@
+{% extends "header.html" %}
+{% block body %}
+
+{% for message in form.price.errors %}
+   {{ message }}
+{% endfor %}
+{% for message in form.coin.errors %}
+   {{ message }}
+{% endfor %}
+
+<form method="post">
+    {{ form.csrf_token }}
+    <div class="form-group">
+      <label for="price">Target Price</label>
+      {{ form.price(class_="form-control") }}
+      <!--<input type="email" name="email" class="form-control" id="signupEmail" aria-describedby="emailHelp" placeholder="Enter email">-->
+    </div>
+    <div class="form-group">
+      <label for="coin">Coin</label>
+      {{ form.coin(class_="form-control") }}
+     <!-- <input type="password" name="password" class="form-control" id="signupPassword" placeholder="Password">-->
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+{% endblock %}  

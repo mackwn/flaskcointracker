@@ -30,8 +30,9 @@ class User(UserMixin, db.Model):
 
 class Notification(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    coin = db.Column(db.String(30))
     price = db.Column(db.Float)
-    direction = db.Column(db.String(10))
+    initial_price = db.Column(db.Float)
     created = db.Column(
         db.DateTime, nullable=False, default=datetime.datetime.utcnow)
     fulfilled_date = db.Column(db.DateTime)
