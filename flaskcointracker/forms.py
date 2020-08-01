@@ -33,7 +33,7 @@ class EmailPasswordUpdateForm(Form):
     confirm = PasswordField('Confirm Password')
 
 class NotificationForm(Form):
-    price = DecimalField('Price',places=2,validators=DataRequired())
+    price = DecimalField('Price',places=2,validators=[DataRequired()])
     coin = SelectField('Coin', choices=[(k, v[0]) for k, v in coin_dict.items()],
         validators=[DataRequired()])
 

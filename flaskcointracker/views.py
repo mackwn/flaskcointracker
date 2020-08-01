@@ -151,7 +151,7 @@ def view_notifications():
     notifications = Notification.query.all()
     return render_template('notifications.html', notifications=notifications)
 
-@app.route('/notification/new')
+@app.route('/notifications/new',methods=['GET','POST'])
 @login_required
 def create_notification():
     user = User.query.get(current_user.id)
@@ -175,12 +175,14 @@ def create_notification():
 @login_required
 def delete_notification(notification_id):
     note = Notification.query.get(notification_id)
+    if not note: return abort(404)
     if note.user_id != current_user.id:
         return abort(404)
     form = forms.NotificationDeleteForm()
 
     if form.validate_on_submit():
         db.session.delete(note)
+        db.session.commit()
 
         return redirect(url_for('view_user',user_id = int(current_user.id)))
 

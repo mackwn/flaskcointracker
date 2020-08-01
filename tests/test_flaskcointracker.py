@@ -3,6 +3,8 @@ import tempfile
 import pytest
 import flaskcointracker
 
+homepage_text = b'Flask Coin Tracker - Current Spot Prices'
+
 # Model Tests
 #def test_user():
     #User = flaskcointracker.models.User
@@ -23,7 +25,7 @@ def test_homepage(client):
     response = client.get('/')
 
     assert response.status_code == 200
-    assert b'Home page yo - Salvete omnes' in response.data
+    assert homepage_text in response.data
 
 def test_signup(client):
 
@@ -45,7 +47,7 @@ def test_signup(client):
     },follow_redirects=True)
     assert response.status_code == 200
     ## redirected to homepage 
-    assert b'Home page yo - Salvete omnes' in response.data
+    assert homepage_text in response.data
     added_user = flaskcointracker.models.User.query.filter(
         flaskcointracker.models.User.email == TESTEMAIL
     ).first()
@@ -99,7 +101,7 @@ def test_login(client):
         'password':"testpass"
     }, follow_redirects=True)
     assert response.status_code == 200
-    assert b'Home page yo - Salvete omnes' in response.data
+    assert homepage_text in response.data
 
     # test login with bad password
     response = client.post('/login',data={
@@ -140,7 +142,7 @@ def test_logout(client):
     user = userlogin('testuser@test.com','testpass',client)
     response = client.get('logout',follow_redirects=True)
     assert response.status_code == 200
-    assert b'Home page yo - Salvete omnes' in response.data
+    assert homepage_text in response.data
     response = client.get('users/{}'.format(int(user.id)),follow_redirects=True)
     assert response.status_code == 200
     assert b'Please log in to access this page.' in response.data
