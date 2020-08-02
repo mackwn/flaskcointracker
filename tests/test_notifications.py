@@ -16,10 +16,22 @@ def userlogin(email,password,client):
 
 
 def test_create_notification(client):
-    reponse = client.get('notifications/new')
-    assert reponse.status_code == 302
+    # if not logged on
+    ## no link on homepage 
+    response = client.get('/')
+    assert response.status_code == 200
+    assert b'Login or create an account' in response.data
+    ## path not allowed for non logged on users
+    response = client.get('notifications/new')
+    assert response.status_code == 302
+    # logged on user can create notifications
     user = userlogin('testuser@test.com','testpass',client)
     assert user
+    ## link on homepage
+    response = client.get('/')
+    assert response.status_code == 200
+    assert b'New Price Notification' in response.data
+    ## the correct template is served
     response = client.get('notifications/new')
     assert response.status_code == 200
     for phrase in ['Coin','Target Price']:
@@ -27,6 +39,7 @@ def test_create_notification(client):
     
     #init_count = len(user.notifications.all())
     #init_count = len(Notification.query.all())
+    ## creating the notification works
     response = client.post('/notifications/new',data={
         'coin':'btc-usd-coinbase',
         'price':300
@@ -47,6 +60,11 @@ def test_delete_notifications(client):
     response = client.post('notifications/4/delete')
     assert response.status_code == 404
     # Actually works
+    ## get request
+    response = client.get('notifications/1/delete')
+    assert response.status_code == 200
+    assert b'Are you sure you want to delete this notification?' in response.data
+    ## post
     response = client.post('notifications/1/delete', follow_redirects=True)
     assert response.status_code == 200
     assert len(Notification.query.filter_by(user_id=1).all()) == 0

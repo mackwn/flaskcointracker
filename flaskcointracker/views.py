@@ -11,8 +11,11 @@ from flaskcointracker.helpers import coinbase_spot_prices
 # Static Pages
 @app.route('/')
 def homepage():
+    if current_user.is_authenticated:
+        user = User.query.get(current_user.id)
+    else: user = None
     prices = coinbase_spot_prices()
-    return render_template("main.html",prices=prices)
+    return render_template("main.html",prices=prices, user=user)
 
 # Views for User
 ## Authenticate User
@@ -72,11 +75,16 @@ def register():
 @login_required
 def view_user(user_id):
     user = User.query.filter_by(id=user_id).first()
+    # validate that the requested user exists
     if not user: return abort(404)
+    #  validate that users are requesting themselves 
     if current_user.id != user.id: 
         print('accessing user that isnt logged on')
         return redirect(url_for('view_user',user_id = int(current_user.id)))
-    return render_template('user.html', user=user)
+    # load notifications
+    notifications = user.notifications.all()
+
+    return render_template('user.html', user=user, notifications=notifications)
 
 # User Index
 @app.route('/users')
@@ -186,7 +194,7 @@ def delete_notification(notification_id):
 
         return redirect(url_for('view_user',user_id = int(current_user.id)))
 
-    return render_template('delete_notification.html', form=forms)
+    return render_template('delete_notification.html', form=form)
 
     
 

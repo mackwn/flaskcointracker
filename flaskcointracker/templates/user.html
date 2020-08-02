@@ -1,14 +1,56 @@
 {% extends "header.html" %}
 
 {% block body %}
-<div class="card" style="width: 18rem;">
-    <div class="card-body">
-      <h5 class="card-title">{{ user.email }}</h5>
-      <h6 class="card-subtitle mb-2 text-muted">Account create: </h6>
-      <p class="card-text">Active notifications</p>
-      <a href="/users/{{ user.id }}/update" class="card-link">Edit</a>
-      <a href="/users/{{ user.id }}/delete" class="card-link">Delete</a>
-    </div>
+<div class=row>
+  <div class = "col-sm-12-md-4-lg-2">
+    <div class="card" style="width: 18rem;">
+        <div class="card-body">
+          <h5 class="card-title">{{ user.email }}</h5>
+          <h6 class="card-subtitle mb-2 text-muted">Account create: </h6>
+          <p class="card-text">Active notifications</p>
+          <a href="/users/{{ user.id }}/update" class="card-link">Edit</a>
+          <a href="/users/{{ user.id }}/delete" class="card-link">Delete</a>
+        </div>
+      </div>
   </div>
+  <div class = "col-sm-12-md-8-lg-10 align-self-center">
+    {% if not notifications %}
+    <span id='user-no-notifications'>You have no 
+      price notifications. Your price notifications will appear here. 
+    </span>
+    {% else %}
+    <table class="table">
+      <thead>
+        <tr>
+        <th scope="col">Coin</th>
+        <th scope="col">Price Target</th>
+        <th scope="col">Created</th>
+        <th scope="col">Initial Price</th>
+        <th scope="col">Fulfilled Date</th>
+        <th scope="col">Fulfilled Price</th>
+        <th scope="col">Delete</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for note in notifications %}
+        <tr>
+        <th scope="row">{{ note.coin }}</th>
 
+        <td>{{ note.price }}</td>
+        <td>{{ note.created }}</td>
+        <td>{{ note.initial_price }}</td>
+        <td>{{ note.fulfilled_date }}</td>
+        <td>{{ note.fulfilled_price }}</td>
+        <td>
+          <a href='/notifications/{{note.id}}/delete'>
+          X</a>
+        </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      </table>
+
+    {% endif %}
+  </div>
+</div>
 {% endblock %}

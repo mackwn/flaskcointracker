@@ -2,6 +2,11 @@
 {% block body %}
 
 <h1>Flask Coin Tracker - Current Spot Prices</h1>
+{% if user %}
+<a href="/notifications/new" class="btn btn-outline-primary" >New Price Notification</a>
+{% else %}
+<span id='login-to-create-note'>Login or create an account to set a price notification.</span>
+{% endif %}
 <table class="table">
 	<thead>
 	  <tr>
