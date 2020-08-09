@@ -261,6 +261,7 @@ def client():
             flaskcointracker.db.session.add(user2)
             flaskcointracker.db.session.commit()
         yield client
-
+    flaskcointracker.db.session.remove()
+    flaskcointracker.db.drop_all()
     os.close(db_fd)
     os.unlink(db_file)

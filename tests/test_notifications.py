@@ -109,6 +109,7 @@ def client():
             print(len(user.notifications.all()))
 
         yield client
-
+    flaskcointracker.db.session.remove()
+    flaskcointracker.db.drop_all()
     os.close(db_fd)
     os.unlink(db_file)

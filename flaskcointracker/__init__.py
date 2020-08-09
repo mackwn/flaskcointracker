@@ -13,7 +13,7 @@ from datetime import timedelta
 import sys
 import os
 #from flaskcointracker.models import db
-from flaskcointracker.helpers import coinbase_spot_prices
+
 
 #project_dir = os.path.split(os.path.dirname(os.path.abspath(__file__)))[0]
 #db_file = "sqlite:///{}".format(os.path.join(project_dir,"bookdatabase.db"))
@@ -37,8 +37,10 @@ login_manager = LoginManager()
 login_manager.login_view = 'login'
 login_manager.init_app(app)
 
-import flaskcointracker.views
+
 from flaskcointracker.models import User, Notification
+from flaskcointracker.helpers import coinbase_spot_prices, check_notifications
+import flaskcointracker.views
 
 app.logger.info('Server up')
 

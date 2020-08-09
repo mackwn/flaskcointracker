@@ -1,7 +1,9 @@
 import requests
 import datetime as dt
 from collections import OrderedDict 
-
+from flaskcointracker import db
+from flaskcointracker.models import Notification
+import datetime
 
 coin_dict = OrderedDict({
     'btc-usd-coinbase':['Bitcoin'],
@@ -28,6 +30,34 @@ def coinbase_spot_prices():
     print('Ethereum price: {}'.format(prices['Ethereum']['price']))
 
     return prices
+
+def check_notifications(prices, coin_dict=coin_dict):
+    for coin, coin_name in coin_dict.items():
+        curr_price = prices[coin_name[0]]
+        print(coin, coin_name)
+        print(curr_price)
+        print(coin_dict)
+        notes = Notification.query.filter(
+            (Notification.coin == coin) &
+            (
+                (
+                    (Notification.price > Notification.initial_price) & 
+                    (Notification.price < curr_price['price'])
+                ) |
+                (
+                    (Notification.price < Notification.initial_price) & 
+                    (Notification.price > curr_price['price'])
+                )
+            )
+        ).all()
+
+        print(len(notes))
+        # Would be nice to see if there's a better way to do this than without another for look
+        for note in notes:
+            # update each with initial price
+            note.fulfilled_price = curr_price['price']
+            note.fulfilled_date = curr_price['date']
+            db.session.commit()
 
 if __name__ == "__main__":
     prices = coinbase_spot_prices()

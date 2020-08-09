@@ -34,7 +34,7 @@ class Notification(db.Model):
     price = db.Column(db.Float)
     initial_price = db.Column(db.Float)
     created = db.Column(
-        db.DateTime, nullable=False, default=datetime.datetime.utcnow)
+        db.DateTime, nullable=False, default=datetime.datetime.utcnow())
     fulfilled_date = db.Column(db.DateTime)
     fulfilled_price = db.Column(db.Float)
     
