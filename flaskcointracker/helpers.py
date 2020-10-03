@@ -34,9 +34,7 @@ def coinbase_spot_prices():
 def check_notifications(prices, coin_dict=coin_dict):
     for coin, coin_name in coin_dict.items():
         curr_price = prices[coin_name[0]]
-        print(coin, coin_name)
-        print(curr_price)
-        print(coin_dict)
+
         notes = Notification.query.filter(
             (Notification.coin == coin) &
             (
@@ -51,7 +49,6 @@ def check_notifications(prices, coin_dict=coin_dict):
             )
         ).all()
 
-        print(len(notes))
         # Would be nice to see if there's a better way to do this than without another for look
         for note in notes:
             # update each with initial price
