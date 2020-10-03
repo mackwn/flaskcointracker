@@ -28,6 +28,18 @@ class User(UserMixin, db.Model):
     def __repr__(self):
             return '<User %r>' % self.email
 
+class Coin(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(30))
+    exchange = db.Column(db.String(30))
+    price = db.Column(db.Float)
+    last_updated = db.Column(
+        db.DateTime, nullable=False, default=datetime.datetime.utcnow()
+    )
+    def __repr__(self):
+            return '<Coin %r>' % self.id
+
+
 class Notification(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     coin = db.Column(db.String(30))
