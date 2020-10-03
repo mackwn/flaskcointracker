@@ -1,3 +1,10 @@
+import os
+import tempfile
+import pytest
+import flaskcointracker
+from flaskcointracker.models import Coin
+from flaskcointracker.helpers import update_coin_prices
+import datetime
 
 # Helpers
 def userlogin(email,password,client):
@@ -9,6 +16,12 @@ def userlogin(email,password,client):
     user = User.query.filter_by(email=email).first()
     return user
 
+def test_update_coin_prices(client):
+
+    spot_prices = {'btc-usd-coinbase':100, 'eth-usd-coinbase':50}
+    update_coin_prices(spot_prices)
+    assert Coin.query.filter(Coin.name=='btc-usd-coinbase').first().price == 100
+    assert Coin.query.filter(Coin.name=='eth-usd-coinbase').first().price == 50
 
 
 
@@ -31,20 +44,12 @@ def client():
             #db_fd.create_all()
             #db = SQLalchemy(flaskcointracker.app)
             flaskcointracker.db.create_all()
-            User = flaskcointracker.models.User
-            user = User(email="testuser@test.com",password="testpass")
-            flaskcointracker.db.session.add(user)
-            user2 = User(email="testuser2@test.com",password="testpass")
-            flaskcointracker.db.session.add(user2)
+            Coin = flaskcointracker.models.Coin
+            coin = Coin(price=0,name='btc-usd-coinbase', exchange='coinbase')
+            coin2 = Coin(price=0,name='eth-usd-coinbase', exchange='coinbase')
+            flaskcointracker.db.session.add(coin)
+            flaskcointracker.db.session.add(coin2)
             flaskcointracker.db.session.commit()
-            note = Notification(price=250,coin='btc-usd-coinbase',owner=User.query.first())
-            note2 = Notification(price=250,coin='btc-usd-coinbase',owner=user2)
-            flaskcointracker.db.session.add(note)
-            flaskcointracker.db.session.add(note2)
-            flaskcointracker.db.session.commit()
-            user = User.query.first()
-            print(user.notifications.first())
-            print(len(user.notifications.all()))
 
         yield client
     flaskcointracker.db.session.remove()

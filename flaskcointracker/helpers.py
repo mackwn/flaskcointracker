@@ -2,7 +2,7 @@ import requests
 import datetime as dt
 from collections import OrderedDict 
 from flaskcointracker import db
-from flaskcointracker.models import Notification
+from flaskcointracker.models import Notification, Coin
 import datetime
 
 coin_dict = OrderedDict({
@@ -10,7 +10,24 @@ coin_dict = OrderedDict({
     'eth-usd-coinbase':['Ethereum']
 })
 
+def update_coin_prices(spot_prices):
+    '''
+    This iterates over the dictionary spotprices, checks to see if there's any  
+    Coin with the same name as spotprice, if it does - update the price.
+    '''
+    for coin_name in spot_prices.keys():
+        saved_coin = Coin.query.filter(Coin.name==coin_name).first()
+        if saved_coin is not None:
+            saved_coin.price = spot_prices[coin_name]
+            try:
+                db.session.commit()
+            except:
+                print('Unable to update price for {}'.format(coin_name))
+
+
 def coinbase_spot_prices():
+    ''' Get spotprices for cryptocurrencies by their api. Return prices for all the coins 
+    in a dictionary with name and price '''
     def _coinbase_spot(currency_pair):
         response = requests.get(
         'https://api.coinbase.com/v2/prices/{currency_pair}/spot'.format(currency_pair=currency_pair),
@@ -32,7 +49,13 @@ def coinbase_spot_prices():
     return prices
 
 def check_notifications(prices, coin_dict=coin_dict):
+
     for coin, coin_name in coin_dict.items():
+        # current price should come from calling coin model otherwise, work the same.
+        # this could by improved by having a many to one relationship of coins to notifications
+        # coindict still serves a purpose as a way to control which coins get notifications.
+        # this could be improved later by adding a display name column to coin
+
         curr_price = prices[coin_name[0]]
 
         notes = Notification.query.filter(
