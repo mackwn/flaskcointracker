@@ -2,7 +2,7 @@ import os
 import tempfile
 import pytest
 import flaskcointracker
-from flaskcointracker.models import Notification
+from flaskcointracker.models import Notification, Coin
 
 # Helpers
 def userlogin(email,password,client):
@@ -47,6 +47,7 @@ def test_create_notification(client):
     assert response.status_code == 200
     #assert len(user.notifications.all()) == init_count+1
     assert len(Notification.query.filter_by(user_id=1).all()) == 2
+
 
 def test_delete_notifications(client):
     # User must be logged on
@@ -103,6 +104,11 @@ def client():
             note2 = Notification(price=250,coin='btc-usd-coinbase',owner=user2)
             flaskcointracker.db.session.add(note)
             flaskcointracker.db.session.add(note2)
+            flaskcointracker.db.session.commit()
+            coin = Coin(price=400,name='btc-usd-coinbase', exchange='coinbase')
+            coin2 = Coin(price=400,name='eth-usd-coinbase', exchange='coinbase')
+            flaskcointracker.db.session.add(coin)
+            flaskcointracker.db.session.add(coin2)
             flaskcointracker.db.session.commit()
             user = User.query.first()
             print(user.notifications.first())

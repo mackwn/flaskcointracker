@@ -4,7 +4,7 @@ from flask import render_template, redirect, request, current_app, session, \
     flash, url_for, abort
 from flask_login import login_user, logout_user, login_required, current_user
 from flaskcointracker import forms
-from flaskcointracker.models import User, Notification
+from flaskcointracker.models import User, Notification, Coin
 import requests
 from flaskcointracker.helpers import coinbase_spot_prices, coin_dict
 
@@ -164,8 +164,23 @@ def view_notifications():
 def create_notification():
     user = User.query.get(current_user.id)
     form = forms.NotificationForm()
-    current_price = 400
+    # current_price = 400
     if form.validate_on_submit():
+        print('validating form')
+        saved_coin = Coin.query.filter(Coin.name==form.coin.data).first()
+        print(saved_coin)
+        print(saved_coin is None)
+        if saved_coin is not None:
+            current_price = saved_coin.price 
+            print(saved_coin.price)
+            print(saved_coin.name)
+        else:
+            flash('Unable to create notification. Please try again.')
+            #return redirect(url_for('create_notification'))
+            print('yo not a coin')
+
+            return abort(404)
+
         note = Notification(
             price = form.price.data,
             coin = form.coin.data,
