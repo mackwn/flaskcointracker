@@ -18,7 +18,10 @@ def userlogin(email,password,client):
 
 def test_update_coin_prices(client):
 
-    spot_prices = {'btc-usd-coinbase':100, 'eth-usd-coinbase':50}
+    spot_prices = {
+        'btc-usd-coinbase':{'price':100,'date':datetime.datetime.utcnow()},
+        'eth-usd-coinbase':{'price':50,'date':datetime.datetime.utcnow()}
+    }
     update_coin_prices(spot_prices)
     assert Coin.query.filter(Coin.name=='btc-usd-coinbase').first().price == 100
     assert Coin.query.filter(Coin.name=='eth-usd-coinbase').first().price == 50

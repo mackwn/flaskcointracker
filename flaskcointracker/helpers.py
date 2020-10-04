@@ -15,10 +15,11 @@ def update_coin_prices(spot_prices):
     This iterates over the dictionary spotprices, checks to see if there's any  
     Coin with the same name as spotprice, if it does - update the price.
     '''
-    for coin_name in spot_prices.keys():
+    for coin_name, value in spot_prices.items():
         saved_coin = Coin.query.filter(Coin.name==coin_name).first()
         if saved_coin is not None:
-            saved_coin.price = spot_prices[coin_name]
+            saved_coin.price = value['price']
+            saved_coin.last_updated = value['date']
             try:
                 db.session.commit()
             except:
