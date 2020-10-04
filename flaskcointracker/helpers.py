@@ -35,7 +35,7 @@ def coinbase_spot_prices():
         price = float(response.json()['data']['amount'])
         date = dt.datetime.strptime(response.headers['Date'], '%a, %d %b %Y %H:%M:%S %Z')
         return  {'price':price,'date':date}
-    pairs = {'Bitcoin':'BTC-USD','Ethereum':'ETH-USD'}
+    pairs = {'btc-usd-coinbase':'BTC-USD','eth-usd-coinbase':'ETH-USD'}
     
     prices = {}
     for k, v in pairs.items():
@@ -43,23 +43,23 @@ def coinbase_spot_prices():
 
     #app.logger.info('Bitcoin price: {}'.format(prices['Bitcoin']['price']))
     #app.logger.info('Ethereum price: {}'.format(prices['Ethereum']['price']))
-    print('Bitcoin price: {}'.format(prices['Bitcoin']['price']))
-    print('Ethereum price: {}'.format(prices['Ethereum']['price']))
+    print('Bitcoin price: {}'.format(prices['btc-usd-coinbase']['price']))
+    print('Ethereum price: {}'.format(prices['eth-usd-coinbase']['price']))
 
     return prices
 
 def check_notifications(prices, coin_dict=coin_dict):
 
-    for coin, coin_name in coin_dict.items():
+    for coin_name in coin_dict.keys():
         # current price should come from calling coin model otherwise, work the same.
         # this could by improved by having a many to one relationship of coins to notifications
         # coindict still serves a purpose as a way to control which coins get notifications.
         # this could be improved later by adding a display name column to coin
 
-        curr_price = prices[coin_name[0]]
+        curr_price = prices[coin_name]
 
         notes = Notification.query.filter(
-            (Notification.coin == coin) &
+            (Notification.coin == coin_name) &
             (
                 (
                     (Notification.price > Notification.initial_price) & 

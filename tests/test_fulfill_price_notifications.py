@@ -11,8 +11,8 @@ def test_notifications_unfulfilled_by_default(client):
 
 def test_fulfill_notification(client):
     prices = {
-        'Bitcoin':{'price':3000,'date':datetime.datetime.utcnow()},
-        'Ethereum':{'price':300,'date':datetime.datetime.utcnow()}
+        'btc-usd-coinbase':{'price':3000,'date':datetime.datetime.utcnow()},
+        'eth-usd-coinbase':{'price':300,'date':datetime.datetime.utcnow()}
     }
     check_notifications(prices)
     assert len(Notification.query.filter(Notification.fulfilled_date == None).all()) == 0

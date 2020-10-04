@@ -6,7 +6,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from flaskcointracker import forms
 from flaskcointracker.models import User, Notification
 import requests
-from flaskcointracker.helpers import coinbase_spot_prices
+from flaskcointracker.helpers import coinbase_spot_prices, coin_dict
 
 # Static Pages
 @app.route('/')
@@ -15,7 +15,7 @@ def homepage():
         user = User.query.get(current_user.id)
     else: user = None
     prices = coinbase_spot_prices()
-    return render_template("main.html",prices=prices, user=user)
+    return render_template("main.html",prices=prices, coin_dict=coin_dict, user=user)
 
 # Views for User
 ## Authenticate User

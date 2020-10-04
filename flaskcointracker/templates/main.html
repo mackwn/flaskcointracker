@@ -16,12 +16,12 @@
 	  </tr>
 	</thead>
 	<tbody>
-		{% for coin in ['Bitcoin', 'Ethereum'] %}
+		{% for coin_name, coin_display in coin_dict.items() %}
 	  <tr>
-		<th scope="row">{{ coin }}</th>
+		<th scope="row">{{ coin_display }}</th>
 		<!-- comments are hard spencer loves tina :D-->
-		<td>{{ prices[coin]['price'] }}</td>
-		<td>{{ prices[coin]['date'].isoformat() }}</td>
+		<td>{{ prices[coin_name]['price'] }}</td>
+		<td>{{ prices[coin_name]['date'].isoformat() }}</td>
 	  </tr>
 	  {% endfor %}
 	</tbody>
