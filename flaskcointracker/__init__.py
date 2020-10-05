@@ -50,7 +50,11 @@ def load_user(user_id):
 
 @periodic_task(run_every=timedelta(seconds=30))
 def periodic_run_get_prices():
-    coinbase_spot_prices()
+    spot_prices = coinbase_spot_prices()
+    check_notifications(spot_prices)
+    update_coin_prices(spot_prices)
+
+
     return
 
 
