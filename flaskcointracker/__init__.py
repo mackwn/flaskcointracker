@@ -39,7 +39,7 @@ login_manager.init_app(app)
 
 
 from flaskcointracker.models import User, Notification
-from flaskcointracker.helpers import coinbase_spot_prices, check_notifications
+from flaskcointracker.helpers import coinbase_spot_prices, check_notifications, update_coin_prices
 import flaskcointracker.views
 
 app.logger.info('Server up')
