@@ -1,8 +1,9 @@
 import requests
 import datetime as dt
 from collections import OrderedDict 
-from flaskcointracker import db
+from flaskcointracker import db, app
 from flaskcointracker.models import Notification, Coin
+#from flaskcointracker.emails import price_notification_email
 import datetime
 
 coin_dict = OrderedDict({
@@ -51,6 +52,7 @@ def coinbase_spot_prices():
 
 def check_notifications(prices, coin_dict=coin_dict):
 
+    new_notifications = []
     for coin_name in coin_dict.keys():
         # current price should come from calling coin model otherwise, work the same.
         # this could by improved by having a many to one relationship of coins to notifications
@@ -79,6 +81,17 @@ def check_notifications(prices, coin_dict=coin_dict):
             note.fulfilled_price = curr_price['price']
             note.fulfilled_date = curr_price['date']
             db.session.commit()
+            #with app.app_context():
+                # try passing price notification email note id's and then
+                # query in emails to avoid this detached thing
+                #price_notification_email(note.id, coin_dict)
+                #db.session.commit() 
+            #price_notification_email(note.id, coin_dict)
+        new_notifications.append(notes)
+    return new_notifications
+
+#def send_notification_emails
+
 
 if __name__ == "__main__":
     prices = coinbase_spot_prices()

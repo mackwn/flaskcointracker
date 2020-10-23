@@ -1,0 +1,8 @@
+{{user_email}},
+
+Your notification for {{coindict[note.coin]}} has been fulfilled. 
+Current price: {{note.fulfilled_price}} at {{note.fulfilled_date}}. 
+Target price: {{note.price}}. Original price: {{note.initial_price}} at 
+{{note.created}}. 
+
+Flaskcointracker

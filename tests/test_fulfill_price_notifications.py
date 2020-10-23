@@ -29,6 +29,7 @@ def client():
     flaskcointracker.app.config['TESTING'] = True
     flaskcointracker.app.config['WTF_CSRF_ENABLED'] = False
     flaskcointracker.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    flaskcointracker.mail.app.config['MAIL_SUPPRESS_SEND'] = True
     #flaskcointracker.app.config['SQLALCHEMY_DATABASE_URI'] = db_fd
 
     with flaskcointracker.app.test_client() as client:
@@ -37,7 +38,7 @@ def client():
             #db = SQLalchemy(flaskcointracker.app)
             flaskcointracker.db.create_all()
             User = flaskcointracker.models.User
-            user = User(email="testuser3@test.com",password="testpass")
+            user = User(email="meninachilleos@gmail.com",password="testpass")
             flaskcointracker.db.session.add(user)
             flaskcointracker.db.session.commit()
             # Bullish notification BTC
