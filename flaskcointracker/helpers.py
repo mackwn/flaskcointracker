@@ -87,7 +87,8 @@ def check_notifications(prices, coin_dict=coin_dict):
                 #price_notification_email(note.id, coin_dict)
                 #db.session.commit() 
             #price_notification_email(note.id, coin_dict)
-        new_notifications.append(notes)
+        new_notifications+=notes
+
     return new_notifications
 
 #def send_notification_emails

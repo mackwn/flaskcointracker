@@ -19,3 +19,6 @@ MAIL_USERNAME = 'apikey'
 MAIL_PASSWORD = os.environ.get('SENDGRID_API_KEY')
 MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER')
 
+# Senders
+NOREPLY = os.environ.get('NOREPLY')
+

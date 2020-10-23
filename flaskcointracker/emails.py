@@ -3,6 +3,7 @@ from flask import render_template, current_app
 from threading import Thread
 from flaskcointracker import app, mail
 from flaskcointracker.helpers import coin_dict
+
 #from flaskcointracker.models import Notification
 
 
@@ -12,10 +13,12 @@ def send_async_email(app, msg):
 
 def send_email(subject, recipients, text_body, html_body):
     #app = current_app._get_current_object()
-    msg = Message(subject, recipients=recipients)
+ 
+    msg = Message(subject, recipients=recipients, sender=app.config['NOREPLY'])
     msg.body = text_body
     msg.html = html_body
-    mail.send(msg)
+    #with app.app_conext():
+       # mail.send(msg)
 
     thr = Thread(target=send_async_email, args=[app, msg])
     thr.start()

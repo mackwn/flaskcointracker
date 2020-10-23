@@ -4,18 +4,34 @@ import pytest
 import flaskcointracker
 from flaskcointracker.models import Notification
 from flaskcointracker.helpers import check_notifications
+from flaskcointracker.emails import price_notification_emails#, mail
+from flask_mail import Mail
 import datetime
 
 def test_notifications_unfulfilled_by_default(client):
     assert len(Notification.query.filter(Notification.fulfilled_date == None).all()) == 4
 
 def test_fulfill_notification(client):
+    
+    #mail.app.config['TESTING'] = True
     prices = {
         'btc-usd-coinbase':{'price':3000,'date':datetime.datetime.utcnow()},
         'eth-usd-coinbase':{'price':300,'date':datetime.datetime.utcnow()}
     }
-    check_notifications(prices)
+    new_notifications = check_notifications(prices)
     assert len(Notification.query.filter(Notification.fulfilled_date == None).all()) == 0
+
+    with flaskcointracker.mail.record_messages() as outbox:
+        price_notification_emails(new_notifications)
+
+    assert len(outbox) == 4
+
+
+
+#def test_send_price_notifications(client):
+    #with flaskcointracker.mail.record_messages() as outbox:
+
+
 
 
 #Fixtures
@@ -29,7 +45,9 @@ def client():
     flaskcointracker.app.config['TESTING'] = True
     flaskcointracker.app.config['WTF_CSRF_ENABLED'] = False
     flaskcointracker.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    flaskcointracker.mail.app.config['MAIL_SUPPRESS_SEND'] = True
+    flaskcointracker.app.config['MAIL_SUPPRESS_SEND'] = True
+    flaskcointracker.mail = Mail(flaskcointracker.app)
+    #flaskcointracker.mail.app.config['MAIL_SUPPRESS_SEND'] = True
     #flaskcointracker.app.config['SQLALCHEMY_DATABASE_URI'] = db_fd
 
     with flaskcointracker.app.test_client() as client:
