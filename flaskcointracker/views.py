@@ -170,6 +170,7 @@ def create_notification():
         saved_coin = Coin.query.filter(Coin.name==form.coin.data).first()
         print(saved_coin)
         print(saved_coin is None)
+        # Get the current price of the coin
         if saved_coin is not None:
             current_price = saved_coin.price 
             print(saved_coin.price)
@@ -180,6 +181,17 @@ def create_notification():
             print('yo not a coin')
 
             return abort(404)
+        # Make sure the user doesn't have too many notifications
+        note_count = len(
+            Notification.query.filter(
+                    (Notification.owner==user) &
+                    (Notification.fulfilled_price==None)
+                ).all()
+            )
+        if note_count > app.config['MAX_NOTIFICATIONS']:
+            flash('''Wait for notifications to mature or delete existing notifications before 
+            creating more notifications.''')
+            return redirect(url_for('create_notification'))
 
         note = Notification(
             price = form.price.data,

@@ -75,6 +75,21 @@ def test_delete_notifications(client):
 def test_notifications_index(client):
     pass 
 
+def test_maximum_notifications(client):
+    user = userlogin('testuser@test.com','testpass',client)
+    assert user
+    for i in range(1,flaskcointracker.app.config['MAX_NOTIFICATIONS']+1):
+        note = Notification(price=250,coin='btc-usd-coinbase',owner=user)
+        flaskcointracker.db.session.add(note)
+        flaskcointracker.db.session.commit()
+
+    response = client.post('/notifications/new',data={
+        'coin':'btc-usd-coinbase',
+        'price':300
+    }, follow_redirects=True)
+    assert b'Wait for notifications to mature' in response.data
+
+
 
 #Fixtures
 

@@ -63,6 +63,7 @@ def check_notifications(prices, coin_dict=coin_dict):
 
         notes = Notification.query.filter(
             (Notification.coin == coin_name) &
+            (Notification.fulfilled_price == None) &
             (
                 (
                     (Notification.price > Notification.initial_price) & 
