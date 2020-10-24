@@ -2,6 +2,7 @@ import os
 import tempfile
 import pytest
 import flaskcointracker
+from flaskcointracker.models import User
 
 homepage_text = b'Flask Coin Tracker - Current Spot Prices'
 
@@ -89,6 +90,23 @@ def test_signup(client):
         flaskcointracker.models.User.email == notemail
     ).first()
     assert not added_user
+
+def test_maximum_users(client):
+    # Test maximum users
+    for i in range(1,flaskcointracker.app.config['MAX_USERS']):
+        new_user = User(email="testuser{}9@test.com".format(i),password="testpass")
+        flaskcointracker.db.session.add(new_user)
+        flaskcointracker.db.session.commit()
+
+
+    response = client.post('/sign-up',data={
+        'email':'one_over_max@max.com',
+        'password':'password',
+        'confirm':'password'
+    },follow_redirects=True)
+    assert b'Sorry, the maximum number' in response.data
+
+
     
 def test_login(client):
     # test get

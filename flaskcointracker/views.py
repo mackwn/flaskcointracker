@@ -51,14 +51,14 @@ def logout():
 @app.route('/sign-up', methods=["GET","POST"])
 def register():
     form = forms.EmailPasswordForm()
-    # print('is the form valid?')
-    # if form.is_submitted():
-    #     print("submitted")
 
-    # if form.validate():
-    #     print("valid")
+    # Apply a cap on the number of users to prevent possible abuse
+    user_count = len(User.query.all())
+    if user_count >= app.config['MAX_USERS']:
+        flash('''Sorry, the maximum number of users has been reached. Please 
+            try again later.''')
+        return render_template("create_user.html", form=form)
 
-    #print(form.errors)
     if form.validate_on_submit():
         #print('yup, form is valid')
         user = User(email=form.email.data, password=form.password.data)
