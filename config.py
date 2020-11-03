@@ -1,17 +1,29 @@
 import os
+from dotenv import load_dotenv
 
+load_dotenv()
 #project_dir = os.path.split(os.path.dirname(os.path.abspath(__file__)))[0]
 project_dir = os.path.dirname(os.path.abspath(__file__))
 db_file = "sqlite:///{}".format(os.path.join(project_dir,"cointracker.db"))
 
 SQLALCHEMY_TRACK_MODIFICATIONS = False
-SQLALCHEMY_DATABASE_URI = db_file
+
 SECRET_KEY = os.environ.get('SECRET_KEY')
-CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
-CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
+
+# Database
+if os.environ.get('DATABASE_URL') is None:
+    SQLALCHEMY_DATABASE_URI = db_file
+else: SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+
+# Celery
+if os.environ.get('REDIS_URL') is None:
+    redis_url = 'redis://127.0.0.1:6379/0'
+else: redis_url = os.environ.get('REDIS_URL')
+CELERY_BROKER_URL = redis_url
+CELERY_RESULT_BACKEND = redis_url
 BCRYPT_LOG_ROUNDS = 12
 
-# email server
+# Email
 MAIL_SERVER = 'smtp.sendgrid.net'
 MAIL_PORT = 587
 MAIL_USE_TLS = True

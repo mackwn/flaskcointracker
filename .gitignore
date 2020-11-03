@@ -13,3 +13,6 @@ celerybeat-schedule.dat
 celerybeat-schedule.dir
 dump.rdb
 sendgrid.env
+.env
+Dockerfile
+docker-compose.yml

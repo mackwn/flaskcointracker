@@ -1,0 +1,16 @@
+Flask
+bcrypt
+celery==4.4.7
+email-validator
+Flask-Migrate
+Flask-Bcrypt
+Flask-Login
+Flask-Mail
+Flask-WTF
+Flask-SQLAlchemy
+redis
+sendgrid
+requests
+python-dotenv
+gunicorn
+pytest
