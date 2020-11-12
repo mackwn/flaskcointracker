@@ -12,7 +12,7 @@ class User(UserMixin, db.Model):
     #__tablename__ = 'users_user'
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True)
-    _password = db.Column(db.String(128))
+    _password = db.Column(db.Binary(128))
     notifications = db.relationship('Notification', backref='owner', lazy='dynamic')
 
     @hybrid_property
