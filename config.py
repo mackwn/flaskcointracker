@@ -3,8 +3,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 #project_dir = os.path.split(os.path.dirname(os.path.abspath(__file__)))[0]
-project_dir = os.path.dirname(os.path.abspath(__file__))
-db_file = "sqlite:///{}".format(os.path.join(project_dir,"cointracker.db"))
 
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
@@ -12,6 +10,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # Database
 if os.environ.get('DATABASE_URL') is None:
+    project_dir = os.path.dirname(os.path.abspath(__file__))
+    db_file = "sqlite:///{}".format(os.path.join(project_dir,"cointracker.db"))
     SQLALCHEMY_DATABASE_URI = db_file
 else: SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
 
