@@ -14,4 +14,4 @@ celerybeat-schedule.dir
 dump.rdb
 sendgrid.env
 .env
-
+*.env
