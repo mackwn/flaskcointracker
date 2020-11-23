@@ -1,7 +1,7 @@
-Toy app which tracks cryptocurrency prices using Coinbase API and sends email price notifications based on user create notifications. Uses the Flask framework with Celery and SendGrid to update prices in a background task and send the email notifications. 
+Toy app which tracks cryptocurrency prices using Coinbase API and sends email price notifications based on user created notifications. Uses the Flask framework with Celery and SendGrid to update prices in a background task and send the email notifications. 
 
 <h2>App structure</h2>
-<hr>
+
 <ul>
 <li>flaskcointracker - main application module</li>
     <ul>
@@ -20,13 +20,13 @@ Toy app which tracks cryptocurrency prices using Coinbase API and sends email pr
 </ul>
 
 <h2>Requirements</h2>
-<hr>
+
 App developed with Python version 3.8.6. 
 
 Production version requires Redis and Postgres to be installed. Email notifications require a SendGrid account with a verified domain. 
 
 <h2>Environment Configuration</h2>
-<hr>
+
 
 <h3>Local development</h3>
 <ul>
@@ -39,7 +39,7 @@ Production version requires Redis and Postgres to be installed. Email notificati
     <li>ADMIN_EMAIL - email to send feedback to</li>
     <li>FLASK_APP=flaskcointracker</li>
     </ul>
-<ul>
+</ul>
 
 <h3>Docker development</h3>
 <ul>
@@ -57,7 +57,8 @@ Production version requires Redis and Postgres to be installed. Email notificati
     <li>POSTGRES_USER=cointrackerdb</li>
     <li>POSTGRES_PASSWORD=cointrackerdb</li>
     <li>POSTGRES_DB=cointrackerdb_prod</li>
-    </ul>ul>
+    </ul>
+</ul>
 
 <h3>Docker production</h3>
 <ul>
@@ -76,7 +77,7 @@ Production version requires Redis and Postgres to be installed. Email notificati
     <li>POSTGRES_PASSWORD - set to a secure value</li>
     <li>POSTGRES_DB - set to a secure value</li>
     </ul>
-<ul>
+</ul>
 
 <h2>Running Application<h2>
 <hr>
