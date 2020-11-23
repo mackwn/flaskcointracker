@@ -32,12 +32,11 @@ services:
 
     db:
         image: postgres:12-alpine
+        env_file: postgres.env
         volumes:
         - postgres_data:/var/lib/postgresql/data/
-        environment:
-        - POSTGRES_USER=cointrackerdb
-        - POSTGRES_PASSWORD=cointrackerdb
-        - POSTGRES_DB=cointrackerdb_prod
+        
+   
 volumes:
     redis: {}
     postgres_data:

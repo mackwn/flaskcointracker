@@ -7,10 +7,9 @@ services:
         volumes:
             - "redis:/data"
     web:
-        #image: fitzaudoen/flaskcointracker
-        build:
-            context: "."
-        command: gunicorn flaskcointracker:app -b :5000
+        image: fitzaudoen/flaskcointracker
+        env_file: development.env
+        command: flask run
         depends_on: 
             - redis
             - db
@@ -18,19 +17,19 @@ services:
             - 5000:5000
     
     worker:
-        build: 
-            context: "."
+        image: fitzaudoen/flaskcointracker
+        env_file: development.env
         command: celery worker -A flaskcointracker.celery
         depends_on: 
             - "redis"
 
     worker2:
-        build: 
-            context: "."
+        image: fitzaudoen/flaskcointracker
+        env_file: development.env
         command: celery beat -A flaskcointracker.celery
         depends_on: 
             - "redis"
-
+    
     db:
         image: postgres:12-alpine
         volumes:
@@ -39,6 +38,8 @@ services:
         - POSTGRES_USER=cointrackerdb
         - POSTGRES_PASSWORD=cointrackerdb
         - POSTGRES_DB=cointrackerdb_prod
+
+
 volumes:
     redis: {}
     postgres_data:
