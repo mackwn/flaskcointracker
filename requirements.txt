@@ -1,6 +1,6 @@
 Flask
 bcrypt
-celery==4.4.7
+celery==5.2.2
 email-validator
 Flask-Migrate
 Flask-Bcrypt
